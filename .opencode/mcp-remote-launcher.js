@@ -8,8 +8,25 @@ const launcherDir = __dirname;
 const configRoot = path.resolve(launcherDir, '..');
 const sharedProjectRoot = 'C:\\Users\\Cancio\\Code\\outzero-flutter\\outzero_app';
 
-function getNpxCommand() {
-  return isWindows ? 'npx.cmd' : 'npx';
+function getMcpRemoteCommand() {
+  const localBinary = path.join(
+    configRoot,
+    'node_modules',
+    '.bin',
+    isWindows ? 'mcp-remote.cmd' : 'mcp-remote',
+  );
+
+  if (fs.existsSync(localBinary)) {
+    return {
+      command: localBinary,
+      args: [],
+    };
+  }
+
+  return {
+    command: isWindows ? 'npx.cmd' : 'npx',
+    args: ['-y', 'mcp-remote@latest'],
+  };
 }
 
 const SERVER_CONFIG = {
@@ -170,12 +187,13 @@ function launch() {
     }
   }
 
-  const args = ['-y', 'mcp-remote@latest', config.url, '--transport', config.transport];
+  const runtime = getMcpRemoteCommand();
+  const args = [...runtime.args, config.url, '--transport', config.transport];
   for (const header of buildHeaders(config.headers, mergedEnv)) {
     args.push('--header', header);
   }
 
-  spawnAndProxy(getNpxCommand(), args, {
+  spawnAndProxy(runtime.command, args, {
     cwd: configRoot,
     env: mergedEnv,
   });

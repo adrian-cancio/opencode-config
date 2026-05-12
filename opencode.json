@@ -8,7 +8,7 @@
         "C:/Users/Cancio/.config/opencode/.opencode/mcp-remote-launcher.js",
         "github"
       ],
-      "timeout": 20000,
+      "timeout": 60000,
       "enabled": true
     },
     "context7": {
@@ -18,7 +18,7 @@
         "C:/Users/Cancio/.config/opencode/.opencode/mcp-remote-launcher.js",
         "context7"
       ],
-      "timeout": 20000,
+      "timeout": 60000,
       "enabled": true
     }
   }
