@@ -6,7 +6,6 @@ const isWindows = process.platform === 'win32';
 const requestedServer = process.argv[2];
 const launcherDir = __dirname;
 const configRoot = path.resolve(launcherDir, '..');
-const sharedProjectRoot = 'C:\\Users\\Cancio\\Code\\outzero-flutter\\outzero_app';
 
 function getMcpRemoteCommand() {
   const localBinary = path.join(
@@ -76,10 +75,7 @@ function loadEnvFile(filePath) {
 }
 
 function getEnvCandidates() {
-  return [
-    path.join(sharedProjectRoot, '.env.opencode-mcp'),
-    path.join(configRoot, '.env.opencode-mcp'),
-  ];
+  return [path.join(configRoot, '.env.opencode-mcp')];
 }
 
 function getExistingEnvFiles() {

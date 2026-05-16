@@ -1,11 +1,41 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "reference": {
+    "opencode-config": {
+      "path": "~/.config/opencode"
+    },
+    "code": {
+      "path": "~/Code"
+    }
+  },
+  "permission": {
+    "bash": {
+      "*": "allow",
+      "git commit": "ask",
+      "git commit *": "ask",
+      "git push": "ask",
+      "git push *": "ask",
+      "git reset": "ask",
+      "git reset *": "ask",
+      "git restore": "ask",
+      "git restore *": "ask",
+      "git clean": "ask",
+      "git clean *": "ask",
+      "rm *": "ask",
+      "del *": "ask",
+      "rmdir *": "ask",
+      "Remove-Item": "ask",
+      "Remove-Item *": "ask"
+    }
+  },
+  "lsp": {},
   "mcp": {
     "brave-search": {
       "type": "local",
       "command": [
         "node",
-        "C:/Users/Cancio/.config/opencode/.opencode/npm-bin-launcher.js",
+        "-e",
+        "const path=require('path');const os=require('os');const script=path.join(os.homedir(),'.config','opencode','.opencode','npm-bin-launcher.js');process.argv.splice(1,0,script);require(script);",
         "brave-search-mcp-server"
       ],
       "timeout": 60000,
@@ -15,7 +45,8 @@
       "type": "local",
       "command": [
         "node",
-        "C:/Users/Cancio/.config/opencode/.opencode/npm-bin-launcher.js",
+        "-e",
+        "const path=require('path');const os=require('os');const script=path.join(os.homedir(),'.config','opencode','.opencode','npm-bin-launcher.js');process.argv.splice(1,0,script);require(script);",
         "mcp-server-browsermcp"
       ],
       "timeout": 60000,
@@ -25,7 +56,8 @@
       "type": "local",
       "command": [
         "node",
-        "C:/Users/Cancio/.config/opencode/.opencode/npm-bin-launcher.js",
+        "-e",
+        "const path=require('path');const os=require('os');const script=path.join(os.homedir(),'.config','opencode','.opencode','npm-bin-launcher.js');process.argv.splice(1,0,script);require(script);",
         "mcp-docker-server"
       ],
       "timeout": 60000,
@@ -35,7 +67,8 @@
       "type": "local",
       "command": [
         "node",
-        "C:/Users/Cancio/.config/opencode/.opencode/mcp-remote-launcher.js",
+        "-e",
+        "const path=require('path');const os=require('os');const script=path.join(os.homedir(),'.config','opencode','.opencode','mcp-remote-launcher.js');process.argv.splice(1,0,script);require(script);",
         "github"
       ],
       "timeout": 60000,
@@ -45,7 +78,8 @@
       "type": "local",
       "command": [
         "node",
-        "C:/Users/Cancio/.config/opencode/.opencode/mcp-remote-launcher.js",
+        "-e",
+        "const path=require('path');const os=require('os');const script=path.join(os.homedir(),'.config','opencode','.opencode','mcp-remote-launcher.js');process.argv.splice(1,0,script);require(script);",
         "context7"
       ],
       "timeout": 60000,

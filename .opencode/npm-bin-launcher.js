@@ -6,7 +6,6 @@ const isWindows = process.platform === 'win32';
 const executableName = process.argv[2];
 const forwardedArgs = process.argv.slice(3);
 const configRoot = path.resolve(__dirname, '..');
-const sharedProjectRoot = 'C:\\Users\\Cancio\\Code\\outzero-flutter\\outzero_app';
 
 const REQUIRED_ENV_BY_EXECUTABLE = {
   'brave-search-mcp-server': ['BRAVE_API_KEY'],
@@ -64,10 +63,7 @@ function loadEnvFile(filePath) {
 }
 
 function getEnvCandidates() {
-  return [
-    path.join(sharedProjectRoot, '.env.opencode-mcp'),
-    path.join(configRoot, '.env.opencode-mcp'),
-  ];
+  return [path.join(configRoot, '.env.opencode-mcp')];
 }
 
 function getExistingEnvFiles() {
