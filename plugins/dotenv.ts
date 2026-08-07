@@ -67,8 +67,16 @@ const dotenv: Plugin = async () => {
       }
 
       const omnicode = cfg.mcp?.["omnicode"]
-      if (omnicode && "url" in omnicode && env.OMNIROUTE_MCP_URL) {
-        omnicode.url = env.OMNIROUTE_MCP_URL
+      if (omnicode && "url" in omnicode) {
+        if (env.OMNIROUTE_MCP_URL) {
+          omnicode.url = env.OMNIROUTE_MCP_URL
+        }
+        if (env.OMNIROUTE_MCP_TOKEN) {
+          omnicode.headers = {
+            ...omnicode.headers,
+            Authorization: `Bearer ${env.OMNIROUTE_MCP_TOKEN}`,
+          }
+        }
       }
     },
   }

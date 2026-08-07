@@ -106,6 +106,9 @@
     "omnicode": {
       "type": "remote",
       "url": "{env:OMNIROUTE_MCP_URL}",
+      "headers": {
+        "Authorization": "Bearer {env:OMNIROUTE_MCP_TOKEN}"
+      },
       "timeout": 60000,
       "enabled": true
     }
