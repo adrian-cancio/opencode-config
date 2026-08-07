@@ -2,6 +2,7 @@
   "dependencies": {
     "@brave/brave-search-mcp-server": "^2.0.82",
     "@browsermcp/mcp": "^0.1.3",
+    "@bybrawe/opencode-loop": "^0.5.19",
     "@opencode-ai/plugin": "^1.15.3",
     "mcp-docker-server": "^1.0.1",
     "mcp-remote": "^0.1.38"

@@ -16,7 +16,8 @@
     }
   },
   "plugin": [
-    "./plugins/dotenv.ts"
+    "./plugins/dotenv.ts",
+    "./plugins/opencode-loop.ts"
   ],
   "reference": {
     "opencode-config": {
