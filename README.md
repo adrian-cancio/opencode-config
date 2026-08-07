@@ -29,7 +29,7 @@ This repository contains the user-wide OpenCode setup used across projects.
 - `agents/`: custom global agents
 - `commands/`: custom global slash commands
 - `.opencode/`: local helper scripts used by the MCP setup
-- `.env.opencode-mcp.example`: example env file for MCP secrets
+- `.env.example`: example env file for secrets (copy to `.env`)
 
 ## Included Global Workflows
 
@@ -62,7 +62,7 @@ These can be used from any OpenCode session.
 
 ## MCP Notes
 
-- Secrets are loaded from `.env.opencode-mcp`.
+- Secrets are loaded from `.env` by `plugins/dotenv.ts` and the launchers in `.opencode/`.
 - `browsermcp` requires a connected BrowserMCP browser session.
 - `brave-search` requires `BRAVE_API_KEY`.
 - `github` and `context7` are started through the local remote launcher.

@@ -75,7 +75,7 @@ function loadEnvFile(filePath) {
 }
 
 function getEnvCandidates() {
-  return [path.join(configRoot, '.env.opencode-mcp')];
+  return [path.join(configRoot, '.env')];
 }
 
 function getExistingEnvFiles() {
@@ -167,11 +167,11 @@ function launch() {
 
   const config = SERVER_CONFIG[requestedServer];
   const envFilePaths = getExistingEnvFiles();
-  const localEnvPath = path.join(configRoot, '.env.opencode-mcp');
+  const localEnvPath = path.join(configRoot, '.env');
 
   if (envFilePaths.length === 0) {
     fail(
-      `Missing ${localEnvPath}. Copy .env.opencode-mcp.example and fill in the required secrets.`,
+      `Missing ${localEnvPath}. Copy .env.example and fill in the required secrets.`,
     );
   }
 

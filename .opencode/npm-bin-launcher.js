@@ -63,7 +63,7 @@ function loadEnvFile(filePath) {
 }
 
 function getEnvCandidates() {
-  return [path.join(configRoot, '.env.opencode-mcp')];
+  return [path.join(configRoot, '.env')];
 }
 
 function getExistingEnvFiles() {
@@ -85,7 +85,7 @@ function buildLaunchEnv(name) {
   const requiredEnv = REQUIRED_ENV_BY_EXECUTABLE[name] || [];
   for (const key of requiredEnv) {
     if (!merged[key]) {
-      fail(`Missing required variable ${key} in .env.opencode-mcp for ${name}.`);
+      fail(`Missing required variable ${key} in .env for ${name}.`);
     }
   }
 
