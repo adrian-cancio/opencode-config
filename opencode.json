@@ -17,6 +17,7 @@
   },
   "plugin": [
     "./plugins/dotenv.ts",
+    "./plugins/route-monitor.ts",
     "./plugins/opencode-loop.ts"
   ],
   "reference": {
