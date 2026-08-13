@@ -2,6 +2,16 @@
 
 These rules apply across projects. When a repository has its own `AGENTS.md`, `CLAUDE.md`, or more specific project instructions, follow those for repo-specific behavior and use this file as the fallback.
 
+## Language Policy
+
+This is a strict, non-negotiable rule that applies to every decision you make:
+
+- **All committed artifacts must be written in 100% English.** This includes: source code, comments, doc comments, commit messages, error messages in code, variable names, identifiers, config values, README, and any other file tracked by git.
+- **Respond to the user in whatever language they write to you.** If they write in Spanish, reply in Spanish. If they switch to English, switch to English. Never force a language on the user.
+- **Fix existing non-English content when you touch it.** If you edit a file that contains Spanish comments, descriptions, or identifiers, translate them to English as part of the change. Past commits may be in another language; that history is left alone.
+
+If you are unsure whether a file will be committed: assume it will be, and write it in English.
+
 ## Working Style
 
 - Build context before editing. Start with the smallest useful read/search pass instead of guessing.

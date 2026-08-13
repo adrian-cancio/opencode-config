@@ -1,7 +1,8 @@
 ---
-description: Build sin restricciones. Ejecuta cualquier herramienta y comando sin pedir permiso.
+name: YOLO
+description: Unrestricted build agent. Runs any tool or command without asking for permission.
 mode: primary
-color: warning
+color: "#FF0000"
 permission:
   read: allow
   edit: allow
