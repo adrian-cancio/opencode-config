@@ -17,18 +17,18 @@ This repository contains the user-wide OpenCode setup used across projects.
 - A global `review` subagent in `agents/`
 - Reusable global slash commands in `commands/`
 - Global TUI settings in `tui.json`
-- Global runtime config in `opencode.json`
+- Global runtime config in `opencode.jsonc`
 - Local launcher scripts in `.opencode/` for MCP startup and env loading
 
 ## Main Files
 
-- `opencode.json`: global OpenCode runtime config
+- `opencode.jsonc`: global OpenCode runtime config
 - `tui.json`: TUI behavior such as notifications and sound
-- `AGENTS.md`: global fallback instructions
+- `AGENTS.md`: global fallback instructions and config directory guide
 - `skills/`: reusable workflows that OpenCode can load on demand
-- `agents/`: custom global agents
+- `agents/`: custom global agents (`YOLO`, `review`, `security`)
 - `commands/`: custom global slash commands
-- `.opencode/`: local helper scripts used by the MCP setup
+- `.opencode/mcp.mjs`: unified launcher for local and remote MCP servers
 - `.env.example`: example env file for secrets (copy to `.env`)
 
 ## Included Global Workflows
@@ -62,10 +62,11 @@ These can be used from any OpenCode session.
 
 ## MCP Notes
 
-- Secrets are loaded from `.env` by `plugins/dotenv.ts` and the launchers in `.opencode/`.
+- Secrets are loaded from `.env` by `plugins/dotenv.ts` and `.opencode/mcp.mjs`.
 - `browsermcp` requires a connected BrowserMCP browser session.
 - `brave-search` requires `BRAVE_API_KEY`.
-- `github` and `context7` are started through the local remote launcher.
+- `github` and `context7` are remote stdio servers proxied through `mcp-remote`.
+- The local MCP commands use a `node -e` import that resolves `.opencode/mcp.mjs` relative to the home config directory, so `opencode.jsonc` is identical on Windows and Linux.
 
 ## Validation
 
@@ -76,4 +77,4 @@ Useful commands for checking this setup:
 
 ## Restart Required
 
-OpenCode loads config at startup. After changing `opencode.json`, `tui.json`, `AGENTS.md`, `skills/`, `agents/`, `commands/`, or plugins, restart OpenCode.
+OpenCode loads config at startup. After changing `opencode.jsonc`, `tui.json`, `AGENTS.md`, `skills/`, `agents/`, `commands/`, or plugins, restart OpenCode.

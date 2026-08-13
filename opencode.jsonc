@@ -1,0 +1,88 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "omniroute": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "OmniRoute",
+      "options": {
+        "baseURL": "{env:OMNIROUTE_BASE_URL}",
+        "apiKey": "{env:OMNIROUTE_API_KEY}"
+      },
+      "models": {
+        "core-router": {
+          "name": "core-router"
+        }
+      }
+    }
+  },
+  "plugin": [
+    "./plugins/dotenv.ts",
+    "./plugins/route-monitor.ts",
+    "@jfrz38/opencode-copy-last"
+  ],
+  "reference": {
+    "opencode-config": {
+      "path": "~/.config/opencode"
+    },
+    "code": {
+      "path": "~/Code"
+    }
+  },
+  "permission": {
+    "bash": {
+      "*": "allow",
+      "git commit": "ask",
+      "git commit *": "ask",
+      "git push": "ask",
+      "git push *": "ask",
+      "git reset": "ask",
+      "git reset *": "ask",
+      "git restore": "ask",
+      "git restore *": "ask",
+      "git clean": "ask",
+      "git clean *": "ask",
+      "rm *": "ask",
+      "del *": "ask",
+      "rmdir *": "ask",
+      "Remove-Item": "ask",
+      "Remove-Item *": "ask"
+    }
+  },
+  "lsp": {},
+  "mcp": {
+    "brave-search": {
+      "type": "local",
+      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "brave-search-mcp-server"],
+      "timeout": 60000
+    },
+    "browsermcp": {
+      "type": "local",
+      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "mcp-server-browsermcp"],
+      "timeout": 60000
+    },
+    "docker": {
+      "type": "local",
+      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "mcp-docker-server"],
+      "timeout": 60000
+    },
+    "github": {
+      "type": "local",
+      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "github"],
+      "timeout": 60000
+    },
+    "context7": {
+      "type": "local",
+      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "context7"],
+      "timeout": 60000
+    },
+    "omnicode": {
+      "type": "remote",
+      "url": "{env:OMNIROUTE_MCP_URL}",
+      "headers": {
+        "Authorization": "Bearer {env:OMNIROUTE_MCP_TOKEN}"
+      },
+      "timeout": 60000,
+      "enabled": true
+    }
+  }
+}

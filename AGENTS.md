@@ -45,3 +45,45 @@ If you are unsure whether a file will be committed: assume it will be, and write
 - Prefer `docker` for container logs, stats, exec, restarts, and runtime inspection.
 - Prefer `brave-search` for fresh web research. If it is unavailable, continue with native tools such as `webfetch`.
 - Use `scout` when you need upstream library or dependency research without modifying the current workspace.
+
+## This Configuration Directory
+
+This repo is the global opencode config (`~/.config/opencode`). It is loaded once at startup: after editing `opencode.jsonc`, agents, plugins, or skills, tell the user to restart opencode. Verify agent changes with `opencode agent list`.
+
+Layout:
+
+- `opencode.jsonc` — providers, plugins, permissions, references, MCP servers.
+- `tui.json` — TUI behavior (notifications, sounds, theme).
+- `AGENTS.md` — global fallback rules.
+- `agents/*.md` — custom agents. `mode: primary` shows in the Tab cycle; `mode: subagent` is invoked with `@name`. Per-agent `permission` overrides the global `permission` block, so an agent can be more or less permissive than the default.
+- `commands/*.md` — custom slash commands (frontmatter `description` + prompt body).
+- `skills/*/SKILL.md` — on-demand workflows, loaded when the task matches the description.
+- `plugins/*.ts` — TypeScript plugins (bun runtime). `dotenv.ts` loads `.env` into the main process.
+- `.opencode/` — helpers. `mcp.mjs` is the single launcher for all local MCP servers.
+- `node_modules/` — the MCP server binaries are npm packages installed here.
+- `.env` (gitignored) — secrets. `.env.example` is the committed template.
+
+## Adding an MCP Server
+
+Local servers are launched through `.opencode/mcp.mjs`, which resolves the binary in `node_modules/.bin`, merges `.env` variables, and forwards stdio. To add one:
+
+1. `npm install <package>` in this directory so the binary exists under `node_modules/.bin`.
+2. Add an entry to `mcp` in `opencode.jsonc`:
+   ```json
+   "name": {
+     "type": "local",
+     "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "<bin-name>"],
+     "timeout": 60000
+   }
+   ```
+   The `-e` import resolves `.opencode/mcp.mjs` relative to the user's home config directory in one short line. It works identically on Windows, Linux, and macOS without hardcoding paths or backslashes, and needs no TypeScript flag because the launcher is plain ESM (`.mjs`).
+3. If the server needs a key, add it to `.env.example` and, if it must exist at startup, to `REQUIRED_ENV_BY_EXECUTABLE` in `.opencode/mcp.mjs`.
+4. Remote stdio servers that run through `mcp-remote` (like `github` and `context7`) get an entry in `REMOTE_SERVERS` in `.opencode/mcp.mjs` instead, then a matching `command` entry pointing at the server key.
+
+Never put real secrets in `opencode.jsonc` or any committed file. Use `{env:VAR}` placeholders and keep values in `.env`.
+
+## Secrets Handling
+
+- `.env` is gitignored; `.env.example` lists every required variable and is the source of truth for what the launcher and `dotenv.ts` expect.
+- The global `permission` rules block reading `*.env` and `*.env.*` files and asking before `git push/reset/restore/clean` and `rm`. Do not bypass these with bash.
+- The `security` subagent (`@security`) scans staged diffs for leaked secrets before committing; run it when a commit includes new files or config.
