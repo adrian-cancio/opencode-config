@@ -18,7 +18,8 @@
   "plugin": [
     "./plugins/dotenv.ts",
     "./plugins/route-monitor.ts",
-    "./plugins/opencode-loop.ts"
+    "./plugins/opencode-loop.ts",
+    "@jfrz38/opencode-copy-last"
   ],
   "reference": {
     "opencode-config": {
