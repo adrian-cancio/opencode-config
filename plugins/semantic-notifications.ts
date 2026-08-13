@@ -12,6 +12,8 @@ import type {
 
 const pluginID = "local.semantic-notifications"
 
+const SUBAGENT_DONE_SOUND_ENABLED = process.env["OPENCODE_SUBAGENT_DONE_SOUND"] === "1"
+
 const DANGEROUS_BASH_PATTERNS = [
   /(^|\s)rm(\s|$)/i,
   /(^|\s)del(\s|$)/i,
@@ -213,12 +215,13 @@ const tui: TuiPlugin = async (api) => {
   const notify = (sessionID: string | undefined, message: string, sound: TuiAttentionSoundName) => {
     const session = getSession(sessionID)
     const isSubagent = session?.parentID !== undefined
+    const soundMuted = sound === "subagent_done" && !SUBAGENT_DONE_SOUND_ENABLED
 
     void api.attention.notify({
       title: session?.title,
       message,
       notification: isSubagent ? false : { when: "blurred" },
-      sound: { name: sound, when: "always" },
+      sound: soundMuted ? false : { name: sound, when: "always" },
     })
   }
 
