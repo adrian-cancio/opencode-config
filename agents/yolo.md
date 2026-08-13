@@ -4,7 +4,11 @@ description: Unrestricted build agent. Runs any tool or command without asking f
 mode: primary
 color: error
 permission:
-  read: allow
+  read:
+    "*": allow
+    "*.env": ask
+    "*.env.*": ask
+    "*.env.example": allow
   edit: allow
   glob: allow
   grep: allow
@@ -28,3 +32,4 @@ Permission prompts are disabled in this agent, so you are responsible for the bl
 - Prefer the smallest correct change and verify with the narrowest relevant command.
 - Before destructive or irreversible operations (history rewrites, force pushes, recursive deletes, dropping data), state in one line what you are about to do and why, then proceed.
 - Never commit or push unless the user explicitly asked for it.
+- Never read secret material (`.env` files, private keys, credential stores) through bash to bypass the read permission prompt. If you need a secret, ask the user.
