@@ -2,7 +2,7 @@
 name: YOLO
 description: Unrestricted build agent. Runs any tool or command without asking for permission.
 mode: primary
-color: "#FF0000"
+color: error
 permission:
   read: allow
   edit: allow
