@@ -29,8 +29,20 @@
     }
   },
   "permission": {
+    // Rules are evaluated last-match-wins, so broad patterns come first.
+    "read": {
+      "*": "allow",
+      "*.env": "ask",
+      "*.env.*": "ask",
+      "*.env.example": "allow"
+    },
     "bash": {
       "*": "allow",
+      // Reading secrets through bash bypasses the `read` rules above.
+      "cat *.env*": "ask",
+      "type *.env*": "ask",
+      "Get-Content *.env*": "ask",
+      "gc *.env*": "ask",
       "git commit": "ask",
       "git commit *": "ask",
       "git push": "ask",

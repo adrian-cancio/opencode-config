@@ -48,7 +48,14 @@ If you are unsure whether a file will be committed: assume it will be, and write
 
 ## This Configuration Directory
 
-This repo is the global opencode config (`~/.config/opencode`). It is loaded once at startup: after editing `opencode.jsonc`, agents, plugins, or skills, tell the user to restart opencode. Verify agent changes with `opencode agent list`.
+This repo is the global opencode config (`~/.config/opencode`). It is loaded once at startup: after editing `opencode.jsonc`, agents, plugins, or skills, tell the user to restart opencode.
+
+Run `npm run check` before suggesting a restart. A broken config here means opencode refuses to start, so validate first:
+
+- `npm run check` — static validation plus MCP dry-run. Fast, no side effects; run this after any config edit.
+- `npm run check:config` — JSONC parse, unknown top-level keys, permission shapes, plugin/reference paths, agent and skill frontmatter, and `.env.example` coverage of every `{env:VAR}` placeholder.
+- `npm run check:mcp` — dry-runs every local MCP server through both argv shapes the launcher supports, verifying the binary resolves and required keys exist.
+- `npm run check:startup` — runs `opencode agent list` to prove the config actually loads and every agent resolves. Slower; run before a restart.
 
 Layout:
 
@@ -59,7 +66,8 @@ Layout:
 - `commands/*.md` — custom slash commands (frontmatter `description` + prompt body).
 - `skills/*/SKILL.md` — on-demand workflows, loaded when the task matches the description.
 - `plugins/*.ts` — TypeScript plugins (bun runtime). `dotenv.ts` loads `.env` into the main process.
-- `.opencode/` — helpers. `mcp.mjs` is the single launcher for all local MCP servers.
+- `.opencode/` — helpers. `mcp.mjs` is the single launcher for all local MCP servers; `--dry-run` resolves a server without spawning it.
+- `scripts/*.mjs` — config validation, MCP dry-run, and startup smoke test.
 - `node_modules/` — the MCP server binaries are npm packages installed here.
 - `.env` (gitignored) — secrets. `.env.example` is the committed template.
 
@@ -85,5 +93,5 @@ Never put real secrets in `opencode.jsonc` or any committed file. Use `{env:VAR}
 ## Secrets Handling
 
 - `.env` is gitignored; `.env.example` lists every required variable and is the source of truth for what the launcher and `dotenv.ts` expect.
-- The global `permission` rules block reading `*.env` and `*.env.*` files and asking before `git push/reset/restore/clean` and `rm`. Do not bypass these with bash.
+- The global `permission` rules ask before reading `*.env` and `*.env.*` files (`.env.example` stays allowed), before shell commands that would print those files, and before `git push/reset/restore/clean` and `rm`. Do not bypass these with bash.
 - The `security` subagent (`@security`) scans staged diffs for leaked secrets before committing; run it when a commit includes new files or config.

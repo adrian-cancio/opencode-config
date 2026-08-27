@@ -13,7 +13,12 @@ permission:
   glob: allow
   grep: allow
   list: allow
-  bash: allow
+  bash:
+    "*": allow
+    "cat *.env*": ask
+    "type *.env*": ask
+    "Get-Content *.env*": ask
+    "gc *.env*": ask
   task: allow
   external_directory: allow
   lsp: allow

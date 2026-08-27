@@ -1,4 +1,10 @@
 {
+  "scripts": {
+    "check": "node scripts/check-config.mjs && node scripts/check-mcp.mjs",
+    "check:config": "node scripts/check-config.mjs",
+    "check:mcp": "node scripts/check-mcp.mjs",
+    "check:startup": "node scripts/check-startup.mjs"
+  },
   "dependencies": {
     "@brave/brave-search-mcp-server": "^2.0.82",
     "@browsermcp/mcp": "^0.1.3",

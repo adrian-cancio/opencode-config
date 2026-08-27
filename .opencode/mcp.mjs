@@ -8,8 +8,13 @@ import { fileURLToPath } from "node:url"
 // the actual binary and required env vars so the config stays short.
 const isWindows = process.platform === "win32"
 const isDirectScript = Boolean(process.argv[1] && (process.argv[1].endsWith("mcp.mjs") || process.argv[1].endsWith("mcp.ts")))
-const serverName = isDirectScript ? process.argv[2] : process.argv[1]
-const forwardedArgs = process.argv.slice(isDirectScript ? 3 : 2)
+const rawArgs = process.argv.slice(isDirectScript ? 2 : 1)
+// --dry-run resolves the binary and validates env without spawning anything,
+// so `npm run check:mcp` can verify every server in one pass.
+const isDryRun = rawArgs.includes("--dry-run")
+const positionalArgs = rawArgs.filter((arg) => arg !== "--dry-run")
+const serverName = positionalArgs[0]
+const forwardedArgs = positionalArgs.slice(1)
 const configRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 
 // Remote stdio servers proxied through the `mcp-remote` npm package.
@@ -30,13 +35,22 @@ const REMOTE_SERVERS = {
 }
 
 // Env vars that must exist in .env before a local binary is allowed to start.
+// Servers with no required keys are listed explicitly so --dry-run knows the
+// full set of local servers to check.
 const REQUIRED_ENV_BY_EXECUTABLE = {
   "brave-search-mcp-server": ["BRAVE_API_KEY"],
+  "mcp-server-browsermcp": [],
+  "mcp-docker-server": [],
 }
 
 function fail(message) {
   process.stderr.write(`${message}\n`)
   process.exit(1)
+}
+
+// Dry-run output never includes header values, which carry tokens.
+function reportDryRun(message) {
+  process.stdout.write(`ok     ${message}\n`)
 }
 
 // Local npm binaries live in node_modules/.bin as .cmd files on Windows.
@@ -176,6 +190,11 @@ function launchLocal() {
     }
   }
 
+  if (isDryRun) {
+    reportDryRun(`local  ${serverName} -> ${executablePath}`)
+    return
+  }
+
   spawnAndProxy(executablePath, forwardedArgs, { cwd: configRoot, env: mergedEnv })
 }
 
@@ -203,11 +222,16 @@ function launchRemote() {
     args.push("--header", header)
   }
 
+  if (isDryRun) {
+    reportDryRun(`remote ${serverName} -> ${runtime.command} ${config.url}`)
+    return
+  }
+
   spawnAndProxy(runtime.command, args, { cwd: configRoot, env: mergedEnv })
 }
 
 if (!serverName) {
-  fail("Usage: node .opencode/mcp.mjs <github|context7|bin-name> [...args]")
+  fail("Usage: node .opencode/mcp.mjs [--dry-run] <github|context7|bin-name> [...args]")
 }
 
 // Unknown names are treated as local npm binaries.
