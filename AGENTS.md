@@ -35,13 +35,17 @@ If you are unsure whether a file will be committed: assume it will be, and write
 ## Skills
 
 - Prefer loading a matching global skill instead of re-deriving the same workflow each time.
-- Available global workflows cover project onboarding, new project bootstrap, bug triage, and change review.
+- Available global workflows cover project onboarding, new project bootstrap, bug triage, change review, and userscript development.
+- `userscript-dev` is narrowly scoped: only load it for `.user.js` files (Tampermonkey/Violentmonkey/Greasemonkey metadata blocks). Do not apply its injection/evaluate workflow to regular web apps, SPAs, or backend projects — those use `playwright`/`chrome-devtools` directly, with no injection scaffolding.
 
 ## Tools And MCPs
 
 - Prefer `context7` for library/framework documentation and examples.
 - Prefer `github` for GitHub-hosted context, issues, pull requests, review comments, releases, and code search.
-- Prefer `browsermcp` for real browser behavior, rendered UI debugging, screenshots, and tab state. It requires a connected browser tab.
+- Prefer `playwright` for browser automation: navigating, filling forms, clicking, and end-to-end verification of a running web app. It launches its own browser (headed by default) with a persistent profile.
+- Prefer `chrome-devtools` for deep inspection: DOM, console, network requests, and performance traces/insights on a page already open in that tool's own Chrome instance.
+- Use `playwright` and `chrome-devtools` together when developing a web app: drive the flow with `playwright`, then switch to `chrome-devtools` to inspect network/console/performance when something looks wrong.
+- For userscript projects specifically (`.user.js` with a `==UserScript==` block), use the `userscript-dev` skill instead of installing a userscript manager extension inside `playwright`/`chrome-devtools`.
 - Prefer `docker` for container logs, stats, exec, restarts, and runtime inspection.
 - Prefer `brave-search` for fresh web research. If it is unavailable, continue with native tools such as `webfetch`.
 - Use `scout` when you need upstream library or dependency research without modifying the current workspace.

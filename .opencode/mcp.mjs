@@ -39,8 +39,9 @@ const REMOTE_SERVERS = {
 // full set of local servers to check.
 const REQUIRED_ENV_BY_EXECUTABLE = {
   "brave-search-mcp-server": ["BRAVE_API_KEY"],
-  "mcp-server-browsermcp": [],
+  "playwright-mcp": [],
   "mcp-docker-server": [],
+  "chrome-devtools-mcp": [],
 }
 
 function fail(message) {

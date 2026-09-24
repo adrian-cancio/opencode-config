@@ -67,14 +67,19 @@
       "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "brave-search-mcp-server"],
       "timeout": 60000
     },
-    "browsermcp": {
+    "playwright": {
       "type": "local",
-      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "mcp-server-browsermcp"],
+      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "playwright-mcp"],
       "timeout": 60000
     },
     "docker": {
       "type": "local",
       "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "mcp-docker-server"],
+      "timeout": 60000
+    },
+    "chrome-devtools": {
+      "type": "local",
+      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "chrome-devtools-mcp"],
       "timeout": 60000
     },
     "github": {

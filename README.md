@@ -9,7 +9,8 @@ This repository contains the user-wide OpenCode setup used across projects.
 - Global MCP configuration for:
   - `github`
   - `context7`
-  - `browsermcp`
+  - `playwright`
+  - `chrome-devtools`
   - `docker`
   - `brave-search`
 - Global fallback rules in `AGENTS.md`
@@ -63,7 +64,7 @@ These can be used from any OpenCode session.
 ## MCP Notes
 
 - Secrets are loaded from `.env` by `plugins/dotenv.ts` and `.opencode/mcp.mjs`.
-- `browsermcp` requires a connected BrowserMCP browser session.
+- `playwright` launches its own managed browser instance (headed by default, persistent profile).
 - `brave-search` requires `BRAVE_API_KEY`.
 - `github` and `context7` are remote stdio servers proxied through `mcp-remote`.
 - The local MCP commands use a `node -e` import that resolves `.opencode/mcp.mjs` relative to the home config directory, so `opencode.jsonc` is identical on Windows and Linux.
