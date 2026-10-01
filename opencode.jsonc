@@ -18,7 +18,8 @@
   "plugin": [
     "./plugins/dotenv.ts",
     "./plugins/route-monitor.ts",
-    "@jfrz38/opencode-copy-last"
+    "@jfrz38/opencode-copy-last",
+    "@ex-machina/opencode-anthropic-auth@1.8.6"
   ],
   "reference": {
     "opencode-config": {
