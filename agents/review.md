@@ -1,21 +1,46 @@
 ---
 description: Review diffs, pull requests, and local changes without editing files. Use for bug-focused code review and regression checks.
 mode: subagent
-temperature: 0.1
-permission:
-  edit: deny
-  bash:
-    "*": ask
-    "git status": allow
-    "git status *": allow
-    "git diff": allow
-    "git diff *": allow
-    "git log": allow
-    "git log *": allow
-    "git show": allow
-    "git show *": allow
-    "git rev-parse": allow
-    "git rev-parse *": allow
+request:
+  body:
+    temperature: 0.1
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: ask
+  - action: shell
+    resource: "git status"
+    effect: allow
+  - action: shell
+    resource: "git status *"
+    effect: allow
+  - action: shell
+    resource: "git diff"
+    effect: allow
+  - action: shell
+    resource: "git diff *"
+    effect: allow
+  - action: shell
+    resource: "git log"
+    effect: allow
+  - action: shell
+    resource: "git log *"
+    effect: allow
+  - action: shell
+    resource: "git show"
+    effect: allow
+  - action: shell
+    resource: "git show *"
+    effect: allow
+  - action: shell
+    resource: "git rev-parse"
+    effect: allow
+  - action: shell
+    resource: "git rev-parse *"
+    effect: allow
 ---
 
 You are in code review mode.

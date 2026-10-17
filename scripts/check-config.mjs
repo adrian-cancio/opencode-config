@@ -10,62 +10,66 @@ const configRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".
 const configPath = path.join(configRoot, "opencode.jsonc")
 const launcherPath = path.join(configRoot, ".opencode", "mcp.mjs")
 
-// Mirrors the top-level keys opencode accepts. Anything else is rejected at
-// startup with ConfigInvalidError, so an unknown key here is a real failure.
+// Native V2 top-level keys. Anything that is neither a V2 key nor a known
+// legacy key is reported as an error.
 const KNOWN_TOP_LEVEL_KEYS = new Set([
   "$schema",
   "username",
   "model",
-  "small_model",
   "default_agent",
   "shell",
-  "logLevel",
-  "share",
-  "autoupdate",
-  "snapshot",
+  "update",
+  "snapshots",
   "instructions",
   "skills",
-  "reference",
   "references",
-  "agent",
-  "command",
-  "provider",
-  "disabled_providers",
-  "enabled_providers",
+  "agents",
+  "commands",
+  "providers",
   "mcp",
-  "plugin",
-  "permission",
+  "plugins",
+  "permissions",
+  "policies",
   "formatter",
   "lsp",
   "experimental",
   "tool_output",
   "compaction",
-  "theme",
-  "keybinds",
-  "layout",
-  "attribution",
-  "tui",
-])
-
-const KNOWN_PERMISSION_KEYS = new Set([
-  "read",
-  "edit",
-  "glob",
-  "grep",
-  "list",
-  "bash",
-  "task",
-  "external_directory",
-  "todowrite",
-  "question",
-  "webfetch",
+  "watcher",
+  "media",
   "websearch",
-  "lsp",
-  "doom_loop",
-  "skill",
+  "warming",
+  "worktree",
+  "enterprise",
 ])
 
-const PERMISSION_ACTIONS = new Set(["allow", "ask", "deny"])
+// V1 keys that V2 still accepts and normalizes. They keep working, but the
+// native V2 form is preferred, so they only produce a warning.
+const LEGACY_TOP_LEVEL_KEYS = {
+  provider: "providers",
+  plugin: "plugins",
+  permission: "permissions",
+  reference: "references",
+  agent: "agents",
+  command: "commands",
+  snapshot: "snapshots",
+  autoupdate: "update",
+  small_model: "agents.title.model",
+  attachment: "media",
+  tools: "permissions",
+  mode: "agents",
+  logLevel: "OPENCODE_LOG_LEVEL",
+  share: null,
+  disabled_providers: "policies",
+  enabled_providers: "policies",
+  theme: "cli.json",
+  keybinds: "cli.json",
+  layout: "cli.json",
+  attribution: null,
+  tui: "cli.json",
+}
+
+const PERMISSION_EFFECTS = new Set(["allow", "ask", "deny"])
 const AGENT_MODES = new Set(["primary", "subagent", "all"])
 
 const errors = []
@@ -160,49 +164,35 @@ function parseFrontmatter(content) {
   return fields
 }
 
-function checkPermissionValue(scope, key, value) {
-  if (typeof value === "string") {
-    if (!PERMISSION_ACTIONS.has(value)) {
-      error(`${scope}: permission.${key} has invalid action '${value}'.`)
-    }
+// V2 permissions are one ordered array of { action, resource, effect } rules.
+// Action names are open-ended strings (plugins and MCP tools add their own),
+// so only the shape and the effect are validated.
+function checkPermissionRules(scope, permissions) {
+  if (permissions === undefined) return
+
+  if (!Array.isArray(permissions)) {
+    error(`${scope}: permissions must be an array of { action, resource, effect } rules.`)
     return
   }
 
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
-    error(`${scope}: permission.${key} must be an action string or a pattern object.`)
-    return
-  }
+  permissions.forEach((rule, index) => {
+    const where = `${scope}: permissions[${index}]`
 
-  for (const [pattern, action] of Object.entries(value)) {
-    if (!PERMISSION_ACTIONS.has(action)) {
-      error(`${scope}: permission.${key}['${pattern}'] has invalid action '${action}'.`)
-    }
-  }
-}
-
-function checkPermissionBlock(scope, permission) {
-  if (permission === undefined) return
-
-  if (typeof permission === "string") {
-    if (!PERMISSION_ACTIONS.has(permission)) {
-      error(`${scope}: permission must be an action string or an object.`)
-    }
-    return
-  }
-
-  if (typeof permission !== "object" || permission === null) {
-    error(`${scope}: permission must be an action string or an object.`)
-    return
-  }
-
-  for (const [key, value] of Object.entries(permission)) {
-    if (!KNOWN_PERMISSION_KEYS.has(key)) {
-      error(`${scope}: unknown permission key '${key}'.`)
-      continue
+    if (typeof rule !== "object" || rule === null || Array.isArray(rule)) {
+      error(`${where} must be an object.`)
+      return
     }
 
-    checkPermissionValue(scope, key, value)
-  }
+    for (const field of ["action", "resource", "effect"]) {
+      if (typeof rule[field] !== "string" || rule[field] === "") {
+        error(`${where} is missing a string '${field}'.`)
+      }
+    }
+
+    if (typeof rule.effect === "string" && !PERMISSION_EFFECTS.has(rule.effect)) {
+      error(`${where} has invalid effect '${rule.effect}'.`)
+    }
+  })
 }
 
 function readConfig() {
@@ -227,43 +217,57 @@ function checkTopLevel(config) {
   }
 
   for (const key of Object.keys(config)) {
-    if (!KNOWN_TOP_LEVEL_KEYS.has(key)) {
-      error(`opencode.jsonc: unknown top-level key '${key}' will be rejected at startup.`)
+    if (KNOWN_TOP_LEVEL_KEYS.has(key)) continue
+
+    if (key in LEGACY_TOP_LEVEL_KEYS) {
+      const replacement = LEGACY_TOP_LEVEL_KEYS[key]
+      warn(
+        replacement
+          ? `opencode.jsonc: '${key}' is a V1 key; use '${replacement}' instead.`
+          : `opencode.jsonc: '${key}' is a V1 key with no V2 equivalent and is ignored.`,
+      )
+      continue
     }
+
+    error(`opencode.jsonc: unknown top-level key '${key}'.`)
   }
 }
 
 // The read rules are the only thing standing between an agent and .env, so a
-// missing or reordered block is treated as a hard failure.
+// missing or reordered rule is treated as a hard failure.
 function checkSecretGuards(config) {
-  const read = config.permission?.read
+  const rules = Array.isArray(config.permissions) ? config.permissions : []
+  const readRules = rules
+    .map((rule, index) => ({ ...rule, index }))
+    .filter((rule) => rule.action === "read")
 
-  if (!read || typeof read !== "object") {
-    error("opencode.jsonc: permission.read is missing; .env files would be readable without a prompt.")
+  if (readRules.length === 0) {
+    error("opencode.jsonc: no 'read' permission rules; .env files would be readable without a prompt.")
     return
   }
 
   for (const pattern of ["*.env", "*.env.*"]) {
-    if (read[pattern] !== "ask" && read[pattern] !== "deny") {
-      error(`opencode.jsonc: permission.read['${pattern}'] must be 'ask' or 'deny'.`)
+    const rule = readRules.find((candidate) => candidate.resource === pattern)
+
+    if (!rule || (rule.effect !== "ask" && rule.effect !== "deny")) {
+      error(`opencode.jsonc: a 'read' rule for '${pattern}' must exist with effect 'ask' or 'deny'.`)
     }
   }
 
   // Last match wins, so the broad allow has to come before the narrow rules.
-  const patterns = Object.keys(read)
-  const wildcardIndex = patterns.indexOf("*")
-  const envIndex = patterns.indexOf("*.env")
+  const wildcard = readRules.find((rule) => rule.resource === "*")
+  const env = readRules.find((rule) => rule.resource === "*.env")
 
-  if (wildcardIndex !== -1 && envIndex !== -1 && wildcardIndex > envIndex) {
-    error("opencode.jsonc: permission.read['*'] must be declared before the *.env rules (last match wins).")
+  if (wildcard && env && wildcard.index > env.index) {
+    error("opencode.jsonc: the 'read' rule for '*' must come before the *.env rules (last match wins).")
   }
 }
 
 function checkPlugins(config) {
-  for (const entry of config.plugin ?? []) {
-    const spec = Array.isArray(entry) ? entry[0] : entry
+  for (const entry of config.plugins ?? []) {
+    const spec = typeof entry === "string" ? entry : entry?.package
     if (typeof spec !== "string") {
-      error(`opencode.jsonc: plugin entry ${JSON.stringify(entry)} must be a string or [name, options] tuple.`)
+      error(`opencode.jsonc: plugin entry ${JSON.stringify(entry)} must be a string or { package, options } object.`)
       continue
     }
 
@@ -277,7 +281,8 @@ function checkPlugins(config) {
 }
 
 function checkMcp(config) {
-  for (const [name, server] of Object.entries(config.mcp ?? {})) {
+  // V2 nests servers under mcp.servers; mcp.timeout holds shared defaults.
+  for (const [name, server] of Object.entries(config.mcp?.servers ?? {})) {
     if (!server.type) {
       error(`opencode.jsonc: mcp '${name}' is missing the required 'type' field.`)
       continue
@@ -306,7 +311,7 @@ function checkMcp(config) {
 }
 
 function checkReferences(config) {
-  const references = config.reference ?? config.references ?? {}
+  const references = config.references ?? config.reference ?? {}
 
   for (const [alias, value] of Object.entries(references)) {
     const target = typeof value === "string" ? value : value?.path
@@ -346,6 +351,20 @@ function checkAgents() {
 
     if (frontmatter.prompt !== undefined) {
       error(`${scope}: remove 'prompt' from frontmatter; the file body is the prompt.`)
+    }
+
+    // V1 frontmatter fields that V2 documents as legacy for agents.
+    for (const [legacy, replacement] of [
+      ["permission", "permissions (an ordered rule list)"],
+      ["temperature", "request.body.temperature"],
+      ["top_p", "request.body.top_p"],
+      ["disable", "disabled"],
+      ["maxSteps", "steps"],
+      ["tools", "permissions"],
+    ]) {
+      if (frontmatter[legacy] !== undefined) {
+        error(`${scope}: '${legacy}' is a V1 field; use ${replacement}.`)
+      }
     }
   }
 }
@@ -471,7 +490,7 @@ const config = readConfig()
 
 if (config) {
   checkTopLevel(config)
-  checkPermissionBlock("opencode.jsonc", config.permission)
+  checkPermissionRules("opencode.jsonc", config.permissions)
   checkSecretGuards(config)
   checkPlugins(config)
   checkMcp(config)

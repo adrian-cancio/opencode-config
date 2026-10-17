@@ -1,0 +1,22 @@
+{
+  "$schema": "https://opencode.ai/v2/cli.json",
+  "plugins": [
+    "./plugins/semantic-notifications.ts",
+    "-internal:notifications"
+  ],
+  "attention": {
+    "enabled": true,
+    "notifications": true,
+    "sound": true,
+    "volume": 0.9,
+    "sounds": {
+      "default": "./sounds/default.wav",
+      "question": "./sounds/question.wav",
+      "permission": "./sounds/permission.wav",
+      "error": "./sounds/error.wav",
+      "done": "./sounds/done.wav",
+      "subagent_done": "./sounds/subagent-done.wav"
+    }
+  },
+  "diffs": {}
+}

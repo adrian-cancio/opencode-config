@@ -1,10 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "provider": {
+  "providers": {
     "omniroute": {
-      "npm": "@ai-sdk/openai-compatible",
       "name": "OmniRoute",
-      "options": {
+      "package": "aisdk:@ai-sdk/openai-compatible",
+      "settings": {
         "baseURL": "{env:OMNIROUTE_BASE_URL}",
         "apiKey": "{env:OMNIROUTE_API_KEY}"
       },
@@ -15,13 +15,13 @@
       }
     }
   },
-  "plugin": [
+  "plugins": [
     "./plugins/dotenv.ts",
     "./plugins/route-monitor.ts",
     "@jfrz38/opencode-copy-last",
     "@ex-machina/opencode-anthropic-auth@1.8.6"
   ],
-  "reference": {
+  "references": {
     "opencode-config": {
       "path": "~/.config/opencode"
     },
@@ -29,88 +29,89 @@
       "path": "~/Code"
     }
   },
-  "permission": {
-    // Rules are evaluated last-match-wins, so broad patterns come first.
-    "read": {
-      "*": "allow",
-      "*.env": "ask",
-      "*.env.*": "ask",
-      "*.env.example": "allow"
-    },
-    "bash": {
-      "*": "allow",
-      // Reading secrets through bash bypasses the `read` rules above.
-      "cat *.env*": "ask",
-      "type *.env*": "ask",
-      "Get-Content *.env*": "ask",
-      "gc *.env*": "ask",
-      "git commit": "ask",
-      "git commit *": "ask",
-      "git push": "ask",
-      "git push *": "ask",
-      "git reset": "ask",
-      "git reset *": "ask",
-      "git restore": "ask",
-      "git restore *": "ask",
-      "git clean": "ask",
-      "git clean *": "ask",
-      "rm *": "ask",
-      "del *": "ask",
-      "rmdir *": "ask",
-      "Remove-Item": "ask",
-      "Remove-Item *": "ask"
-    }
-  },
+  // Rules are evaluated last-match-wins, so broad patterns come first.
+  "permissions": [
+    { "action": "read", "resource": "*", "effect": "allow" },
+    { "action": "read", "resource": "*.env", "effect": "ask" },
+    { "action": "read", "resource": "*.env.*", "effect": "ask" },
+    { "action": "read", "resource": "*.env.example", "effect": "allow" },
+
+    { "action": "shell", "resource": "*", "effect": "allow" },
+    // Reading secrets through the shell bypasses the `read` rules above.
+    { "action": "shell", "resource": "cat *.env*", "effect": "ask" },
+    { "action": "shell", "resource": "type *.env*", "effect": "ask" },
+    { "action": "shell", "resource": "Get-Content *.env*", "effect": "ask" },
+    { "action": "shell", "resource": "gc *.env*", "effect": "ask" },
+    { "action": "shell", "resource": "git commit", "effect": "ask" },
+    { "action": "shell", "resource": "git commit *", "effect": "ask" },
+    { "action": "shell", "resource": "git push", "effect": "ask" },
+    { "action": "shell", "resource": "git push *", "effect": "ask" },
+    { "action": "shell", "resource": "git reset", "effect": "ask" },
+    { "action": "shell", "resource": "git reset *", "effect": "ask" },
+    { "action": "shell", "resource": "git restore", "effect": "ask" },
+    { "action": "shell", "resource": "git restore *", "effect": "ask" },
+    { "action": "shell", "resource": "git clean", "effect": "ask" },
+    { "action": "shell", "resource": "git clean *", "effect": "ask" },
+    { "action": "shell", "resource": "rm *", "effect": "ask" },
+    { "action": "shell", "resource": "del *", "effect": "ask" },
+    { "action": "shell", "resource": "rmdir *", "effect": "ask" },
+    { "action": "shell", "resource": "Remove-Item", "effect": "ask" },
+    { "action": "shell", "resource": "Remove-Item *", "effect": "ask" }
+  ],
   "lsp": {},
   "mcp": {
-    "brave-search": {
-      "type": "local",
-      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "brave-search-mcp-server"],
-      "timeout": 60000
+    // Default for every server; individual servers can override it.
+    "timeout": {
+      "startup": 60000,
+      "catalog": 60000,
+      "execution": 60000
     },
-    "playwright": {
-      "type": "local",
-      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "playwright-mcp"],
-      "timeout": 60000
-    },
-    "docker": {
-      "type": "local",
-      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "mcp-docker-server"],
-      "timeout": 60000
-    },
-    "chrome-devtools": {
-      "type": "local",
-      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "chrome-devtools-mcp"],
-      "timeout": 60000
-    },
-    "github": {
-      "type": "local",
-      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "github"],
-      "timeout": 60000
-    },
-    "context7": {
-      "type": "local",
-      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "context7"],
-      "timeout": 60000
-    },
-    "omnicode": {
-      "type": "remote",
-      "url": "{env:OMNIROUTE_MCP_URL}",
-      "headers": {
-        "Authorization": "Bearer {env:OMNIROUTE_MCP_TOKEN}"
+    "servers": {
+      "brave-search": {
+        "type": "local",
+        "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "brave-search-mcp-server"]
       },
-      "timeout": 60000,
-      "enabled": true
-    },
-    "rea": {
-      "type": "local",
-      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "rea", "mcp"],
-      "timeout": 60000
-    },
-    "rea-native": {
-      "type": "local",
-      "command": ["wsl.exe", "-d", "Ubuntu", "--exec", "/home/cancio/tools/rea-mcp.sh"],
-      "timeout": 120000
+      "playwright": {
+        "type": "local",
+        "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "playwright-mcp"]
+      },
+      "docker": {
+        "type": "local",
+        "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "mcp-docker-server"]
+      },
+      "chrome-devtools": {
+        "type": "local",
+        "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "chrome-devtools-mcp"]
+      },
+      "github": {
+        "type": "local",
+        "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "github"]
+      },
+      "context7": {
+        "type": "local",
+        "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "context7"]
+      },
+      "omnicode": {
+        "type": "remote",
+        "url": "{env:OMNIROUTE_MCP_URL}",
+        "headers": {
+          "Authorization": "Bearer {env:OMNIROUTE_MCP_TOKEN}"
+        },
+        "disabled": false
+      },
+      "rea": {
+        "type": "local",
+        "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "rea", "mcp"]
+      },
+      "rea-native": {
+        "type": "local",
+        "command": ["wsl.exe", "-d", "Ubuntu", "--exec", "/home/cancio/tools/rea-mcp.sh"],
+        "timeout": {
+          "startup": 120000,
+          "catalog": 120000,
+          "execution": 120000
+        }
+      }
     }
   }
 }

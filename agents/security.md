@@ -1,21 +1,46 @@
 ---
 description: Scan diffs, staged changes, and the worktree for leaked secrets, hardcoded credentials, and risky config before committing. Use when preparing a commit or reviewing a diff for secret exposure.
 mode: subagent
-temperature: 0.1
-permission:
-  edit: deny
-  read: allow
-  bash:
-    "*": ask
-    "git status": allow
-    "git status *": allow
-    "git diff": allow
-    "git diff *": allow
-    "git grep *": allow
-    "git log": allow
-    "git log *": allow
-    "git rev-parse": allow
-    "git rev-parse *": allow
+request:
+  body:
+    temperature: 0.1
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: ask
+  - action: shell
+    resource: "git status"
+    effect: allow
+  - action: shell
+    resource: "git status *"
+    effect: allow
+  - action: shell
+    resource: "git diff"
+    effect: allow
+  - action: shell
+    resource: "git diff *"
+    effect: allow
+  - action: shell
+    resource: "git grep *"
+    effect: allow
+  - action: shell
+    resource: "git log"
+    effect: allow
+  - action: shell
+    resource: "git log *"
+    effect: allow
+  - action: shell
+    resource: "git rev-parse"
+    effect: allow
+  - action: shell
+    resource: "git rev-parse *"
+    effect: allow
 ---
 
 You are a security auditor focused exclusively on secret and credential exposure.

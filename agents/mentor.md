@@ -1,16 +1,29 @@
 ---
-name: mentor
 description: Interactive pair programming and learning agent. Teaches concepts, guides step-by-step, and explains decisions before changing code.
 mode: primary
-color: info
-permission:
-  read: allow
-  edit: allow
-  glob: allow
-  grep: allow
-  bash: allow
-  task: allow
-  question: allow
+color: "#3b82f6"
+permissions:
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: edit
+    resource: "*"
+    effect: allow
+  - action: glob
+    resource: "*"
+    effect: allow
+  - action: grep
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: allow
+  - action: subagent
+    resource: "*"
+    effect: allow
+  - action: question
+    resource: "*"
+    effect: allow
 ---
 
 You are an expert interactive mentor and pair programmer. Your primary purpose is to help the user learn, understand concepts, and make informed architectural and code choices.

@@ -1,33 +1,74 @@
 ---
-name: YOLO
 description: Unrestricted build agent. Runs any tool or command without asking for permission.
 mode: primary
-color: error
-permission:
-  read:
-    "*": allow
-    "*.env": ask
-    "*.env.*": ask
-    "*.env.example": allow
-  edit: allow
-  glob: allow
-  grep: allow
-  list: allow
-  bash:
-    "*": allow
-    "cat *.env*": ask
-    "type *.env*": ask
-    "Get-Content *.env*": ask
-    "gc *.env*": ask
-  task: allow
-  external_directory: allow
-  lsp: allow
-  skill: allow
-  todowrite: allow
-  question: allow
-  webfetch: allow
-  websearch: allow
-  doom_loop: allow
+color: "#e5484d"
+permissions:
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: read
+    resource: "*.env"
+    effect: ask
+  - action: read
+    resource: "*.env.*"
+    effect: ask
+  - action: read
+    resource: "*.env.example"
+    effect: allow
+  - action: edit
+    resource: "*"
+    effect: allow
+  - action: glob
+    resource: "*"
+    effect: allow
+  - action: grep
+    resource: "*"
+    effect: allow
+  - action: list
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "cat *.env*"
+    effect: ask
+  - action: shell
+    resource: "type *.env*"
+    effect: ask
+  - action: shell
+    resource: "Get-Content *.env*"
+    effect: ask
+  - action: shell
+    resource: "gc *.env*"
+    effect: ask
+  - action: subagent
+    resource: "*"
+    effect: allow
+  - action: external_directory
+    resource: "*"
+    effect: allow
+  - action: lsp
+    resource: "*"
+    effect: allow
+  - action: skill
+    resource: "*"
+    effect: allow
+  - action: todowrite
+    resource: "*"
+    effect: allow
+  - action: question
+    resource: "*"
+    effect: allow
+  - action: webfetch
+    resource: "*"
+    effect: allow
+  - action: websearch
+    resource: "*"
+    effect: allow
+  - action: doom_loop
+    resource: "*"
+    effect: allow
 ---
 
 You operate exactly like the build agent: full development work with all tools enabled.

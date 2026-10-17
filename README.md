@@ -17,14 +17,14 @@ This repository contains the user-wide OpenCode setup used across projects.
 - Reusable global skills in `skills/`
 - A global `review` subagent in `agents/`
 - Reusable global slash commands in `commands/`
-- Global TUI settings in `tui.json`
+- Global terminal client settings in `cli.json`
 - Global runtime config in `opencode.jsonc`
 - Local launcher scripts in `.opencode/` for MCP startup and env loading
 
 ## Main Files
 
 - `opencode.jsonc`: global OpenCode runtime config
-- `tui.json`: TUI behavior such as notifications and sound
+- `cli.json`: terminal client behavior such as notifications and sound
 - `AGENTS.md`: global fallback instructions and config directory guide
 - `skills/`: reusable workflows that OpenCode can load on demand
 - `agents/`: custom global agents (`YOLO`, `review`, `security`)
@@ -78,4 +78,4 @@ Useful commands for checking this setup:
 
 ## Restart Required
 
-OpenCode loads config at startup. After changing `opencode.jsonc`, `tui.json`, `AGENTS.md`, `skills/`, `agents/`, `commands/`, or plugins, restart OpenCode.
+OpenCode loads config at startup. After changing `opencode.jsonc`, `cli.json`, `AGENTS.md`, `skills/`, `agents/`, `commands/`, or plugins, restart OpenCode.

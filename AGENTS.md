@@ -59,14 +59,14 @@ Run `npm run check` before suggesting a restart. A broken config here means open
 - `npm run check` — static validation plus MCP dry-run. Fast, no side effects; run this after any config edit.
 - `npm run check:config` — JSONC parse, unknown top-level keys, permission shapes, plugin/reference paths, agent and skill frontmatter, and `.env.example` coverage of every `{env:VAR}` placeholder.
 - `npm run check:mcp` — dry-runs every local MCP server through both argv shapes the launcher supports, verifying the binary resolves and required keys exist.
-- `npm run check:startup` — runs `opencode agent list` to prove the config actually loads and every agent resolves. Slower; run before a restart.
+- `npm run check:startup` — runs `opencode debug agents` to prove the config actually loads and every agent resolves. Slower; run before a restart.
 
 Layout:
 
-- `opencode.jsonc` — providers, plugins, permissions, references, MCP servers.
-- `tui.json` — TUI behavior (notifications, sounds, theme).
+- `opencode.jsonc` — native V2 config: `providers`, `plugins`, `permissions`, `references`, `mcp.servers`.
+- `cli.json` — terminal client behavior (notifications, sounds). V2 migrated it from the legacy `tui.json`, which is kept only as a V1 leftover.
 - `AGENTS.md` — global fallback rules.
-- `agents/*.md` — custom agents. `mode: primary` shows in the Tab cycle; `mode: subagent` is invoked with `@name`. Per-agent `permission` overrides the global `permission` block, so an agent can be more or less permissive than the default.
+- `agents/*.md` — custom agents. `mode: primary` shows in the Tab cycle; `mode: subagent` is invoked with `@name`. Per-agent `permissions` rules are appended after the global `permissions` list and the last matching rule wins, so an agent can be more or less permissive than the default.
 - `commands/*.md` — custom slash commands (frontmatter `description` + prompt body).
 - `skills/*/SKILL.md` — on-demand workflows, loaded when the task matches the description.
 - `plugins/*.ts` — TypeScript plugins (bun runtime). `dotenv.ts` loads `.env` into the main process.
@@ -80,14 +80,14 @@ Layout:
 Local servers are launched through `.opencode/mcp.mjs`, which resolves the binary in `node_modules/.bin`, merges `.env` variables, and forwards stdio. To add one:
 
 1. `npm install <package>` in this directory so the binary exists under `node_modules/.bin`.
-2. Add an entry to `mcp` in `opencode.jsonc`:
+2. Add an entry to `mcp.servers` in `opencode.jsonc`:
    ```json
    "name": {
      "type": "local",
-     "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "<bin-name>"],
-     "timeout": 60000
+     "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "<bin-name>"]
    }
    ```
+   Timeouts default to the shared `mcp.timeout` block (`startup`, `catalog`, `execution`); add a per-server `timeout` object only to override them.
    The `-e` import resolves `.opencode/mcp.mjs` relative to the user's home config directory in one short line. It works identically on Windows, Linux, and macOS without hardcoding paths or backslashes, and needs no TypeScript flag because the launcher is plain ESM (`.mjs`).
 3. If the server needs a key, add it to `.env.example` and, if it must exist at startup, to `REQUIRED_ENV_BY_EXECUTABLE` in `.opencode/mcp.mjs`.
 4. Remote stdio servers that run through `mcp-remote` (like `github` and `context7`) get an entry in `REMOTE_SERVERS` in `.opencode/mcp.mjs` instead, then a matching `command` entry pointing at the server key.
@@ -97,5 +97,5 @@ Never put real secrets in `opencode.jsonc` or any committed file. Use `{env:VAR}
 ## Secrets Handling
 
 - `.env` is gitignored; `.env.example` lists every required variable and is the source of truth for what the launcher and `dotenv.ts` expect.
-- The global `permission` rules ask before reading `*.env` and `*.env.*` files (`.env.example` stays allowed), before shell commands that would print those files, and before `git push/reset/restore/clean` and `rm`. Do not bypass these with bash.
+- The global `permissions` rules ask before reading `*.env` and `*.env.*` files (`.env.example` stays allowed), before shell commands that would print those files, and before `git push/reset/restore/clean` and `rm`. Do not bypass these with bash.
 - The `security` subagent (`@security`) scans staged diffs for leaked secrets before committing; run it when a commit includes new files or config.

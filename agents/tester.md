@@ -1,14 +1,25 @@
 ---
-name: tester
 description: Test execution and diagnostics subagent. Runs test suites, filters noisy console output, isolates failures, and reports failing assertions with stack traces.
 mode: subagent
-temperature: 0.1
-permission:
-  edit: deny
-  read: allow
-  bash: allow
-  glob: allow
-  grep: allow
+request:
+  body:
+    temperature: 0.1
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: allow
+  - action: glob
+    resource: "*"
+    effect: allow
+  - action: grep
+    resource: "*"
+    effect: allow
 ---
 
 You are a test execution and diagnostic subagent focused on running tests and reporting failures cleanly.

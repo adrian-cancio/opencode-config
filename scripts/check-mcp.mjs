@@ -79,7 +79,7 @@ const config = JSON.parse(stripJsonc(fs.readFileSync(configPath, "utf8")))
 // Collect the server key each local MCP entry passes to the launcher: the last
 // argument after the mcp.mjs import.
 const targets = []
-for (const [name, server] of Object.entries(config.mcp ?? {})) {
+for (const [name, server] of Object.entries(config.mcp?.servers ?? {})) {
   if (server.type !== "local" || !Array.isArray(server.command)) continue
 
   const launcherIndex = server.command.findIndex(
