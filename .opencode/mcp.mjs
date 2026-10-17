@@ -42,6 +42,7 @@ const REQUIRED_ENV_BY_EXECUTABLE = {
   "playwright-mcp": [],
   "mcp-docker-server": [],
   "chrome-devtools-mcp": [],
+  rea: ["GHIDRA_INSTALL_DIR"],
 }
 
 function fail(message) {

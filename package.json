@@ -11,7 +11,8 @@
     "@opencode-ai/plugin": "^1.18.15",
     "@playwright/mcp": "^0.0.82",
     "mcp-docker-server": "^1.0.1",
-    "mcp-remote": "^0.1.38"
+    "mcp-remote": "^0.1.38",
+    "rea-agents": "6.4.0"
   },
   "devDependencies": {
     "chrome-devtools-mcp": "^1.10.1"

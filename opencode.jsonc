@@ -101,6 +101,16 @@
       },
       "timeout": 60000,
       "enabled": true
+    },
+    "rea": {
+      "type": "local",
+      "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "rea", "mcp"],
+      "timeout": 60000
+    },
+    "rea-native": {
+      "type": "local",
+      "command": ["wsl.exe", "-d", "Ubuntu", "--exec", "/home/cancio/tools/rea-mcp.sh"],
+      "timeout": 120000
     }
   }
 }
