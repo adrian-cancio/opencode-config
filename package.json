@@ -7,8 +7,8 @@
   },
   "dependencies": {
     "@brave/brave-search-mcp-server": "^2.0.82",
-    "@jfrz38/opencode-copy-last": "^0.1.1",
-    "@opencode-ai/plugin": "^1.18.15",
+    "@jfrz38/opencode-copy-last": "^0.2.0",
+    "@opencode/plugin": "^2.0.32",
     "@playwright/mcp": "^0.0.82",
     "mcp-docker-server": "^1.0.1",
     "mcp-remote": "^0.1.38",

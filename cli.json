@@ -1,7 +1,8 @@
 {
   "$schema": "https://opencode.ai/v2/cli.json",
   "plugins": [
-    "./plugins/semantic-notifications.ts",
+    "./cli-plugins/semantic-notifications.ts",
+    "./cli-plugins/route-toast.ts",
     "-internal:notifications"
   ],
   "attention": {
@@ -18,5 +19,8 @@
       "subagent_done": "./sounds/subagent-done.wav"
     }
   },
-  "diffs": {}
+  "diffs": {},
+  "theme": {
+    "name": "gruvbox"
+  }
 }

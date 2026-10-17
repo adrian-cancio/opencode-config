@@ -15,11 +15,11 @@
       }
     }
   },
+  // Local plugins in ./plugins (dotenv, route-monitor) are discovered
+  // automatically by V2, so only published packages are listed here.
   "plugins": [
-    "./plugins/dotenv.ts",
-    "./plugins/route-monitor.ts",
-    "@jfrz38/opencode-copy-last",
-    "@ex-machina/opencode-anthropic-auth@1.8.6"
+    "@jfrz38/opencode-copy-last@0.2.0",
+    "@ex-machina/opencode-anthropic-auth@2.0.0-next.6"
   ],
   "references": {
     "opencode-config": {
@@ -102,15 +102,6 @@
       "rea": {
         "type": "local",
         "command": ["node", "-e", "import(require('url').pathToFileURL(require('os').homedir()+'/.config/opencode/.opencode/mcp.mjs'))", "rea", "mcp"]
-      },
-      "rea-native": {
-        "type": "local",
-        "command": ["wsl.exe", "-d", "Ubuntu", "--exec", "/home/cancio/tools/rea-mcp.sh"],
-        "timeout": {
-          "startup": 120000,
-          "catalog": 120000,
-          "execution": 120000
-        }
       }
     }
   }
