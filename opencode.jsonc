@@ -12,7 +12,12 @@
       },
       "models": {
         "core-router": {
-          "name": "core-router"
+          "name": "core-router",
+          "limit": {
+            "context": 872000,
+            "input": 872000,
+            "output": 32000
+          }
         }
       }
     }
