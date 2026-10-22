@@ -25,7 +25,6 @@
   // Local plugins in ./plugins (dotenv, route-monitor) are discovered
   // automatically by V2, so only published packages are listed here.
   "plugins": [
-    "@jfrz38/opencode-copy-last@0.2.0",
     "@ex-machina/opencode-anthropic-auth@2.0.0-next.6"
   ],
   "references": {
