@@ -6,9 +6,9 @@ These rules apply across projects. When a repository has its own `AGENTS.md`, `C
 
 This is a strict, non-negotiable rule that applies to every decision you make:
 
-- **All committed artifacts must be written in 100% English.** This includes: source code, comments, doc comments, commit messages, error messages in code, variable names, identifiers, config values, README, and any other file tracked by git.
+- **Use English for committed code and technical artifacts by default.** This includes source code, comments, identifiers, commit messages, and technical documentation. Preserve intentional localization and project-specific language requirements; Git tracking alone does not make a notes vault English-only.
 - **Respond to the user in whatever language they write to you.** If they write in Spanish, reply in Spanish. If they switch to English, switch to English. Never force a language on the user.
-- **Fix existing non-English content when you touch it.** If you edit a file that contains Spanish comments, descriptions, or identifiers, translate them to English as part of the change. Past commits may be in another language; that history is left alone.
+- Write new code, comments, and technical documentation in English unless the project's instructions require otherwise (for example, a Spanish notes vault or localized user-facing content). Do not translate unrelated existing content or rename public identifiers merely because you touched a file. Keep language cleanup separate from functional changes.
 
 If you are unsure whether a file will be committed: assume it will be, and write it in English.
 
@@ -18,6 +18,18 @@ If you are unsure whether a file will be committed: assume it will be, and write
 - Prefer the smallest correct change. Reuse existing patterns, scripts, and conventions before introducing new ones.
 - Verify with the narrowest relevant command or check.
 - For review requests, inspect the actual diff and relevant files, then present findings first with file references.
+
+## Autonomy And Delivery
+
+- Apply these rules whether working directly with a person or through another agent. They must not depend on a particular OS, machine, provider, or orchestrator.
+- Continue reversible steps toward the approved goal without routine confirmation. Own implementation details inside scope; inspect the actual platform and project conventions rather than assuming them.
+- Investigate technical uncertainty before escalating: distinguish observed facts, hypotheses, and decisions; use a small decisive experiment when it can resolve a design question.
+- Ask when requirements materially conflict, a product trade-off belongs to the user, or the next action exceeds approved scope, permissions, cost, or data exposure. An approved goal does not authorize destructive operations, publication, spending, or bypassing permission prompts.
+- Preserve existing work. If unexpected edits appear, pause overlapping writes and establish ownership before modifying them; do not restore, stash, or overwrite someone else's changes.
+- Keep the working plan proportional to risk. For implementation or multi-step changes, load `agent-delivery`; use specialized skills for debugging, refactoring, and review instead of duplicating them.
+- Repair regressions introduced by your work and continue until acceptance criteria are met or a concrete blocker remains. After a failure, inspect evidence and change the approach; do not repeat attempts without a new hypothesis or observation.
+- Treat successful commands, agent agreement, and plausible explanations as partial evidence, not proof of completion. Report checks as passed, failed, or not run/blocked, with the relevant result and limitations.
+- A review request is read-only unless edits are authorized. Implementation authorization does not by itself authorize commits, pushes, deployments, or broader cleanup.
 
 ## Existing Projects
 
