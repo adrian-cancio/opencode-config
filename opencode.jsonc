@@ -7,10 +7,6 @@
     "omniroute": {
       "name": "OmniRoute",
       "package": "aisdk:@ai-sdk/openai-compatible",
-      "settings": {
-        "baseURL": "{env:OMNIROUTE_BASE_URL}",
-        "apiKey": "{env:OMNIROUTE_API_KEY}"
-      },
       "models": {
         "core-router": {
           "name": "core-router",

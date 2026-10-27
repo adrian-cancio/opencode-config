@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import { Plugin } from "@opencode/plugin"
+import { Provider } from "@opencode/schema/provider"
 
 const CONFIG_DIR = process.env.OPENCODE_CONFIG_DIR || path.join(os.homedir(), ".config", "opencode")
 const ENV_FILE = path.join(CONFIG_DIR, ".env")
@@ -56,18 +57,30 @@ export default Plugin.define({
       }
     }
 
-    await ctx.provider.transform((editor) => {
-      if (!editor.get("omniroute")) return
-      if (!env.OMNIROUTE_BASE_URL && !env.OMNIROUTE_API_KEY) return
+    const baseURL = process.env.OMNIROUTE_BASE_URL || env.OMNIROUTE_BASE_URL
+    const apiKey = process.env.OMNIROUTE_API_KEY || env.OMNIROUTE_API_KEY
 
-      editor.update("omniroute", (provider) => {
-        provider.settings = {
-          ...provider.settings,
-          ...(env.OMNIROUTE_BASE_URL ? { baseURL: env.OMNIROUTE_BASE_URL } : {}),
-          ...(env.OMNIROUTE_API_KEY ? { apiKey: env.OMNIROUTE_API_KEY } : {}),
+    if (baseURL || apiKey) {
+      const settings = {
+        ...(baseURL ? { baseURL } : {}),
+        ...(apiKey ? { apiKey } : {}),
+      }
+
+      await ctx.provider.transform((editor) => {
+        if (editor.get("omniroute")) {
+          editor.update("omniroute", (provider) => {
+            provider.settings = { ...provider.settings, ...settings }
+          })
+          return
         }
+
+        // Config-defined providers are not yet visible in this editor.
+        editor.add({
+          info: { ...Provider.Info.empty(Provider.ID.make("omniroute")), settings },
+          models: [],
+        })
       })
-    })
+    }
 
     await ctx.mcp.transform((editor) => {
       if (!editor.get("omnicode")) return
