@@ -82,6 +82,30 @@ export default Plugin.define({
       })
     }
 
+    const cliproxyBaseURL = process.env.CLIPROXY_BASE_URL || env.CLIPROXY_BASE_URL
+    const cliproxyApiKey = process.env.CLIPROXY_API_KEY || env.CLIPROXY_API_KEY
+
+    if (cliproxyBaseURL || cliproxyApiKey) {
+      const cliproxySettings = {
+        ...(cliproxyBaseURL ? { baseURL: cliproxyBaseURL } : {}),
+        ...(cliproxyApiKey ? { apiKey: cliproxyApiKey } : {}),
+      }
+
+      await ctx.provider.transform((editor) => {
+        if (editor.get("cliproxy")) {
+          editor.update("cliproxy", (provider) => {
+            provider.settings = { ...provider.settings, ...cliproxySettings }
+          })
+          return
+        }
+
+        editor.add({
+          info: { ...Provider.Info.empty(Provider.ID.make("cliproxy")), settings: cliproxySettings },
+          models: [],
+        })
+      })
+    }
+
     await ctx.mcp.transform((editor) => {
       if (!editor.get("omnicode")) return
       if (!env.OMNIROUTE_MCP_URL) return
