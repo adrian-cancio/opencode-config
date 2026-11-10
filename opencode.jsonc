@@ -4,12 +4,42 @@
   "model": "omniroute/core-router",
   "websearch": { "provider": "exa" },
   "providers": {
+    "cliproxy": {
+      "name": "CLIProxy",
+      "package": "aisdk:@ai-sdk/openai-compatible",
+      "models": {
+        "core-router": {
+          "name": "core-router",
+          "limit": {
+            "context": 872000,
+            "input": 872000,
+            "output": 32000
+          }
+        },
+        "core-router-fb": {
+          "name": "core-router-fb",
+          "limit": {
+            "context": 872000,
+            "input": 872000,
+            "output": 32000
+          }
+        }
+      }
+    },
     "omniroute": {
       "name": "OmniRoute",
       "package": "aisdk:@ai-sdk/openai-compatible",
       "models": {
         "core-router": {
           "name": "core-router",
+          "limit": {
+            "context": 872000,
+            "input": 872000,
+            "output": 32000
+          }
+        },
+        "core-router-fb": {
+          "name": "core-router-fb",
           "limit": {
             "context": 872000,
             "input": 872000,
